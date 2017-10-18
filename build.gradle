@@ -54,7 +54,6 @@ allprojects {
     println(branchFullNameFormatted)
     println(commit)
 
-//    println("details.lastTag: ${details.lastTag}")
 //    println("details.commitDistance: ${details.commitDistance}")
 //    println("details.gitHash: ${details.gitHash}")
 //    println("details.gitHashFull : ${details.gitHashFull }") // full 40-character Git commit hash
