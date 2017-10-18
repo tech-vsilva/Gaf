@@ -54,7 +54,6 @@ allprojects {
     println(branchFullNameFormatted)
     println(commit)
 
-//    def details = ${gitVer}()
 //    println("details.lastTag: ${details.lastTag}")
 //    println("details.commitDistance: ${details.commitDistance}")
 //    println("details.gitHash: ${details.gitHash}")
