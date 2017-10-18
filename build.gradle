@@ -1,0 +1,109 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        jcenter()
+
+        dependencies {
+            //Check for the latest version here: http://plugins.gradle.org/plugin/com.jfrog.artifactory
+            classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4+"
+            classpath "org.ajoberstar:grgit:2.0.1"
+            classpath "org.ajoberstar.reckon:reckon-gradle:0.2.1"
+//        classpath "org.ajoberstar:gradle-git:1.7.2"
+
+        }
+    }
+}
+
+def branchFullNameFormatted
+def supportingBranchPrefix
+def commit
+def tag
+
+
+allprojects {
+    apply plugin: "com.jfrog.artifactory"
+    apply plugin: "org.ajoberstar.grgit"
+    apply plugin: "org.ajoberstar.reckon"
+
+//    apply plugin: "org.ajoberstar.release-base"
+//    apply plugin: "org.ajoberstar.release-opinion"
+
+    reckon {
+        normal = scopeFromProp()
+        preRelease = stageFromProp('milestone', 'rc', 'final')
+        // alternately
+        // preRelease = snapshotFromProp()
+    }
+
+    def branchFullName = "${grgit.getBranch().current().getName().toLowerCase()}"
+
+    // supporting branches prefix
+    if (branchFullName.contains("/")) {
+        // feature/, or release/, or hotfix/, branch names
+        supportingBranchPrefix = branchFullName.substring(0, branchFullName.indexOf("/"))
+        branchFullNameFormatted = branchFullName.replace("/", "-")
+    } else {
+        // develop, or master
+        supportingBranchPrefix = branchFullName
+        branchFullNameFormatted = branchFullName
+    }
+
+    commit = "${grgit.head().getAbbreviatedId()}"
+
+    println(supportingBranchPrefix)
+    println(branchFullNameFormatted)
+    println(commit)
+//    println(gitVersion())
+
+//    def details = ${gitVer}()
+//    println("details.lastTag: ${details.lastTag}")
+//    println("details.commitDistance: ${details.commitDistance}")
+//    println("details.gitHash: ${details.gitHash}")
+//    println("details.gitHashFull : ${details.gitHashFull }") // full 40-character Git commit hash
+//    println("details.branchName : ${details.branchName }") // is null if the repository in detached HEAD mode
+//    println("details.isCleanTag: ${details.isCleanTag}")
+
+
+    def customVersion = "1.0-${branchFullName.replace("/", "-").toLowerCase()}-${commit}"
+    println(customVersion)
+}
+
+artifactory {
+    contextUrl = "${artifactory_contextUrl}"   //The base Artifactory URL if not overridden by the publisher/resolver
+    publish {
+        repository {
+//            repoKey = "ob-gradle-${supportingBranchPrefix}-publisher-local"
+            repoKey = "ob-gradle-feature-publisher-local"
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
+
+        }
+    }
+    resolve {
+        repository {
+            repoKey = 'gradle-resolver-virtual'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
+
+        }
+    }
+}
+
+group 'org.foo'
+//version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+//repositories {
+//    mavenCentral()
+//}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
