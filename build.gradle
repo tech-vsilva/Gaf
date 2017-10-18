@@ -30,7 +30,7 @@ allprojects {
 
     reckon {
         normal = scopeFromProp()
-        preRelease = stageFromProp('milestone', 'rc', 'final')
+        preRelease = stageFromProp('feature', 'rc', 'final')
         // alternately
         // preRelease = snapshotFromProp()
     }
@@ -53,7 +53,6 @@ allprojects {
     println(supportingBranchPrefix)
     println(branchFullNameFormatted)
     println(commit)
-//    println(gitVersion())
 
 //    def details = ${gitVer}()
 //    println("details.lastTag: ${details.lastTag}")
