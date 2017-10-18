@@ -30,7 +30,7 @@ allprojects {
 
     reckon {
         normal = scopeFromProp()
-        preRelease = stageFromProp('feature', 'rc', 'final')
+        preRelease = stageFromProp('milestone', 'rc', 'final')
         // alternately
         // preRelease = snapshotFromProp()
     }
